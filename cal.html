@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Average Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .response p {
+            margin: 5px 0;
+        }
+        .response pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .buttons button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Average Calculator</h1>
+
+    <div class="buttons">
+        <button onclick="fetchNumbers('p')">Fetch Primes</button>
+        <button onclick="fetchNumbers('f')">Fetch Fibonacci</button>
+        <button onclick="fetchNumbers('e')">Fetch Even</button>
+        <button onclick="fetchNumbers('r')">Fetch Random</button>
+    </div>
+
+    <div id="response-container" class="response">
+        <p><strong>Window Previous State:</strong></p>
+        <pre id="windowPrevState">[]</pre>
+
+        <p><strong>Window Current State:</strong></p>
+        <pre id="windowCurrState">[]</pre>
+
+        <p><strong>Fetched Numbers:</strong></p>
+        <pre id="numbers">[]</pre>
+
+        <p><strong>Average:</strong></p>
+        <pre id="avg">0.00</pre>
+    </div>
+
+    <script>
+        async function fetchNumbers(type) {
+            const url = `http://localhost:9876/numbers/${type}`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch numbers');
+                }
+
+                const data = await response.json();
+                updateUI(data);
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to fetch numbers. Please try again later.');
+            }
+        }
+
+        function updateUI(data) {
+            document.getElementById('windowPrevState').textContent = JSON.stringify(data.windowPrevState, null, 2);
+            document.getElementById('windowCurrState').textContent = JSON.stringify(data.windowCurrState, null, 2);
+            document.getElementById('numbers').textContent = JSON.stringify(data.numbers, null, 2);
+            document.getElementById('avg').textContent = data.avg;
+        }
+    </script>
+</body>
+</html>
